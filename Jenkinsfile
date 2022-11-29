@@ -1,38 +1,31 @@
 pipeline {
-    agent {label 'debian_server'}
+    agent none
 
     stages {
-        stage('Cloning Back end') {
+        stage('Deploying for dev Environment') {
+            agent {label 'debian-test'}
             steps {
                 echo 'Clonning Backend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/backend-vue.git'
-            }
-        }
-        stage('Cloning Front end') {
-            steps {
+                echo 'Building dev backend'
+                sh 'docker compose up -d'
                 echo 'Clonning Frontend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/projecto-vue.git'
+                echo 'Building dev frontend'
+                sh 'docker compose up -d dev'
             }
         }
-        stage('Prepare Docker Image Backend') {
+        stage('Deploying for production Environment') {
+            agent {label 'debian_server'}
             steps {
-                sh 'docker build -t jsonserver .'
-            }
-        }
-        stage('Prepare Docker Image FrontEnd') {
-            steps {
-                sh 'docker build -t diplomado/heroes-app .'
-            }
-        }
-        stage('Cloning Fullstack Repository') {
-            steps {
-                echo 'Clonning Composer repository'
-                git branch: 'main', url: 'https://github.com/manuel-munoz-guti/laboratorio4.git'
-            }
-        }
-        stage('Build Fullstack repository') {
-            steps {
+                echo 'Clonning Backend Project'
+                git branch: 'main', url: 'https://github.com/manuel-munoz-guti/backend-vue.git'
+                echo 'Building dev backend'
                 sh 'docker compose up -d'
+                echo 'Clonning Frontend Project'
+                git branch: 'main', url: 'https://github.com/manuel-munoz-guti/projecto-vue.git'
+                echo 'Building dev frontend'
+                sh 'docker compose up -d hero-webapp'
             }
         }
     }
