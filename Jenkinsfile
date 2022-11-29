@@ -1,14 +1,12 @@
 pipeline {
     agent any
 
-    stages('Building for DEV environment') {    
+    stages {   
         stage('Cloning for DEV') {
             agent {label 'debian-test'}
             steps {
                 echo 'Cloning Backend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/backend-vue.git'
-            }
-            steps {
                 echo 'Cloning Frontend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/projecto-vue.git'
             }
@@ -17,9 +15,9 @@ pipeline {
             agent {label 'debian-test'}
             steps {
                 sh 'docker-compose up -d dev'
-            }
-            steps {
+                echo 'Build DEV backend'
                 sh 'docker-compose up -d hero-webapp'
+                echo 'Build DEV frontend'
             }
         }
     }
