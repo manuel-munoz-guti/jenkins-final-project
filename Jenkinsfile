@@ -1,9 +1,9 @@
 pipeline {
-    agent any
+    agent none
 
-    stages {   
-        stage('Cloning for DEV') {
-            agent {label 'debian-test'}
+    stages{   
+        stage('Clone Repository for DEV environment') {
+            agent { label 'debian-test' }
             steps {
                 echo 'Cloning Backend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/backend-vue.git'
