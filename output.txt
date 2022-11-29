@@ -1,0 +1,212 @@
+Started by user manuel munoz
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on debian_server in /home/debian/jenkins_slave/workspace/Proyecto_Final
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Cloning Back end)
+[Pipeline] echo
+Clonning Backend Project
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /home/debian/jenkins_slave/workspace/Proyecto_Final/.git # timeout=10
+ > git config remote.origin.url https://github.com/manuel-munoz-guti/backend-vue.git # timeout=10
+Fetching upstream changes from https://github.com/manuel-munoz-guti/backend-vue.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/manuel-munoz-guti/backend-vue.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 55c6aebaf471a6fb0fb35b24dab1e5325ba843f9 (refs/remotes/origin/main)
+Commit message: "Update README.MD"
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 55c6aebaf471a6fb0fb35b24dab1e5325ba843f9 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 55c6aebaf471a6fb0fb35b24dab1e5325ba843f9 # timeout=10
+ > git rev-list --no-walk 39b1fc34e57fdecebee4126987a26d53bfe67385 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Cloning Front end)
+[Pipeline] echo
+Clonning Backend Project
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /home/debian/jenkins_slave/workspace/Proyecto_Final/.git # timeout=10
+ > git config remote.origin.url https://github.com/manuel-munoz-guti/projecto-vue.git # timeout=10
+Fetching upstream changes from https://github.com/manuel-munoz-guti/projecto-vue.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/manuel-munoz-guti/projecto-vue.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision d9b8027f945e1c6c8cd214bd9ad6342ba47d0f28 (refs/remotes/origin/main)
+Commit message: "Merge pull request #1 from manuel-munoz-guti/dev"
+First time build. Skipping changelog.
+[Pipeline] }
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f d9b8027f945e1c6c8cd214bd9ad6342ba47d0f28 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main d9b8027f945e1c6c8cd214bd9ad6342ba47d0f28 # timeout=10
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Docker Build Backend)
+[Pipeline] sh
++ docker build -t jsonserver .
+Sending build context to Docker daemon  8.555MB
+
+Step 1/10 : FROM node:16.18-alpine3.15 as build-stage
+ ---> fb1708dc1692
+Step 2/10 : WORKDIR /app
+ ---> Using cache
+ ---> 20ac924ffc58
+Step 3/10 : COPY package*.json ./
+ ---> Using cache
+ ---> 35a408460163
+Step 4/10 : RUN npm install
+ ---> Using cache
+ ---> c54f47e5bbac
+Step 5/10 : COPY . .
+ ---> 0189b3a21ea9
+Step 6/10 : RUN npm run build
+ ---> Running in 70100912f80b
+
+> vue-final-project@0.1.0 build
+> vue-cli-service build
+
+All browser targets in the browserslist configuration have supported ES module.
+Therefore we don't build two separate bundles for differential loading.
+
+
+[91m-  Building for production...
+[0m WARNING  Compiled with 1 warning11:49:13 PM
+
+ warning  
+
+entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
+Entrypoints:
+  app (257 KiB)
+      css/chunk-vendors.6d5840fb.css
+      js/chunk-vendors.1a444403.js
+      css/app.29bfc8d3.css
+      js/app.c2a2edf1.js
+
+
+  File                                   Size              Gzipped
+
+  dist/js/chunk-vendors.1a444403.js      156.47 KiB        54.06 KiB
+  dist/js/about.fec491a2.js              25.24 KiB         3.88 KiB
+  dist/js/app.c2a2edf1.js                10.35 KiB         3.80 KiB
+  dist/css/chunk-vendors.6d5840fb.css    90.19 KiB         9.06 KiB
+  dist/css/app.29bfc8d3.css              0.46 KiB          0.29 KiB
+
+  Images and other types of assets omitted.
+  Build at: 2022-11-28T23:49:13.531Z - Hash: 64b2fe2babc079c7 - Time: 5754ms
+
+ DONE  Build complete. The dist directory is ready to be deployed.
+ INFO  Check out deployment instructions at https://cli.vuejs.org/guide/deployment.html
+       
+Removing intermediate container 70100912f80b
+ ---> fee74cad67b3
+Step 7/10 : FROM nginx:1.23.2-alpine as production-stage
+ ---> d0ddde8e3f4f
+Step 8/10 : COPY --from=build-stage /app/dist /usr/share/nginx/html
+ ---> Using cache
+ ---> 3e2e3874bf48
+Step 9/10 : EXPOSE 80
+ ---> Using cache
+ ---> 22d20d8d743b
+Step 10/10 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Using cache
+ ---> 5aedbe8cd65d
+Successfully built 5aedbe8cd65d
+Successfully tagged jsonserver:latest
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Docker Build FrontEnd)
+[Pipeline] sh
++ docker build -t jsonserver .
+Sending build context to Docker daemon  8.555MB
+
+Step 1/10 : FROM node:16.18-alpine3.15 as build-stage
+ ---> fb1708dc1692
+Step 2/10 : WORKDIR /app
+ ---> Using cache
+ ---> 20ac924ffc58
+Step 3/10 : COPY package*.json ./
+ ---> Using cache
+ ---> 35a408460163
+Step 4/10 : RUN npm install
+ ---> Using cache
+ ---> c54f47e5bbac
+Step 5/10 : COPY . .
+ ---> Using cache
+ ---> 0189b3a21ea9
+Step 6/10 : RUN npm run build
+ ---> Using cache
+ ---> fee74cad67b3
+Step 7/10 : FROM nginx:1.23.2-alpine as production-stage
+ ---> d0ddde8e3f4f
+Step 8/10 : COPY --from=build-stage /app/dist /usr/share/nginx/html
+ ---> Using cache
+ ---> 3e2e3874bf48
+Step 9/10 : EXPOSE 80
+ ---> Using cache
+ ---> 22d20d8d743b
+Step 10/10 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Using cache
+ ---> 5aedbe8cd65d
+Successfully built 5aedbe8cd65d
+Successfully tagged jsonserver:latest
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Cloning Docker Compose Repository)
+[Pipeline] echo
+Clonning Composer repository
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /home/debian/jenkins_slave/workspace/Proyecto_Final/.git # timeout=10
+ > git config remote.origin.url https://github.com/manuel-munoz-guti/laboratorio4.git # timeout=10
+Fetching upstream changes from https://github.com/manuel-munoz-guti/laboratorio4.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/manuel-munoz-guti/laboratorio4.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 8146b26a030b755082292c10294c6e85d43ed2f7 (refs/remotes/origin/main)
+Commit message: "Final commit"
+First time build. Skipping changelog.
+[Pipeline] }
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 8146b26a030b755082292c10294c6e85d43ed2f7 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 8146b26a030b755082292c10294c6e85d43ed2f7 # timeout=10
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Backend and Frontend)
+[Pipeline] sh
++ docker compose up -d
+Network proyecto_final_default  Creating
+Network proyecto_final_default  Created
+Container proyecto_final-backend-1  Creating
+Container proyecto_final-backend-1  Created
+Container proyecto_final-frontend-1  Creating
+Container proyecto_final-frontend-1  Created
+Container proyecto_final-backend-1  Starting
+Container proyecto_final-backend-1  Started
+Container proyecto_final-frontend-1  Starting
+Container proyecto_final-frontend-1  Started
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
