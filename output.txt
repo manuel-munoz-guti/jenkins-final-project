@@ -17,13 +17,13 @@ Fetching upstream changes from https://github.com/manuel-munoz-guti/jenkins-fina
  > git --version # timeout=10
  > git --version # 'git version 2.30.2'
  > git fetch --tags --force --progress -- https://github.com/manuel-munoz-guti/jenkins-final-project.git +refs/heads/*:refs/remotes/origin/* # timeout=10
-Checking out Revision f93fdad0085d4f144e2292e71f630c067b7fad10 (refs/remotes/origin/main)
-Commit message: "Adding Jenkins File"
-First time build. Skipping changelog.
-[Pipeline] }
+Checking out Revision bb54e634ad26df02c5e9ae8bcfdc0b95069171ed (refs/remotes/origin/main)
+Commit message: "Fixing Jenkinsfile"
  > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
  > git config core.sparsecheckout # timeout=10
- > git checkout -f f93fdad0085d4f144e2292e71f630c067b7fad10 # timeout=10
+ > git checkout -f bb54e634ad26df02c5e9ae8bcfdc0b95069171ed # timeout=10
+ > git rev-list --no-walk ac400cb47a3b6bb552811bb09bcd174bed5e4aa2 # timeout=10
+[Pipeline] }
 [Pipeline] // stage
 [Pipeline] withEnv
 [Pipeline] {
@@ -35,14 +35,14 @@ Clonning Backend Project
 The recommended git tool is: NONE
 No credentials specified
 Fetching changes from the remote Git repository
-Checking out Revision 55c6aebaf471a6fb0fb35b24dab1e5325ba843f9 (refs/remotes/origin/main)
-Commit message: "Update README.MD"
  > git rev-parse --resolve-git-dir /home/debian/jenkins_slave/workspace/Proyecto_Final/.git # timeout=10
  > git config remote.origin.url https://github.com/manuel-munoz-guti/backend-vue.git # timeout=10
 Fetching upstream changes from https://github.com/manuel-munoz-guti/backend-vue.git
  > git --version # timeout=10
  > git --version # 'git version 2.30.2'
  > git fetch --tags --force --progress -- https://github.com/manuel-munoz-guti/backend-vue.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 55c6aebaf471a6fb0fb35b24dab1e5325ba843f9 (refs/remotes/origin/main)
+Commit message: "Update README.MD"
  > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
  > git config core.sparsecheckout # timeout=10
  > git checkout -f 55c6aebaf471a6fb0fb35b24dab1e5325ba843f9 # timeout=10
@@ -55,7 +55,7 @@ Fetching upstream changes from https://github.com/manuel-munoz-guti/backend-vue.
 [Pipeline] stage
 [Pipeline] { (Cloning Front end)
 [Pipeline] echo
-Clonning Backend Project
+Clonning Frontend Project
 [Pipeline] git
 The recommended git tool is: NONE
 No credentials specified
@@ -78,10 +78,10 @@ Fetching upstream changes from https://github.com/manuel-munoz-guti/projecto-vue
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] stage
-[Pipeline] { (Docker Build Backend)
+[Pipeline] { (Prepare Docker Image Backend)
 [Pipeline] sh
 + docker build -t jsonserver .
-Sending build context to Docker daemon   8.58MB
+Sending build context to Docker daemon  8.595MB
 
 Step 1/10 : FROM node:16.18-alpine3.15 as build-stage
  ---> fb1708dc1692
@@ -95,9 +95,9 @@ Step 4/10 : RUN npm install
  ---> Using cache
  ---> c54f47e5bbac
 Step 5/10 : COPY . .
- ---> 7b11958294e8
+ ---> 8e7d9b932b51
 Step 6/10 : RUN npm run build
- ---> Running in df3d57fae096
+ ---> Running in e3db9f7ce9bf
 
 > vue-final-project@0.1.0 build
 > vue-cli-service build
@@ -107,7 +107,7 @@ Therefore we don't build two separate bundles for differential loading.
 
 
 [91m-  Building for production...
-[0m WARNING  Compiled with 1 warning12:17:53 AM
+[0m WARNING  Compiled with 1 warning12:59:49 AM
 
  warning  
 
@@ -129,13 +129,13 @@ Entrypoints:
   dist/css/app.29bfc8d3.css              0.46 KiB          0.29 KiB
 
   Images and other types of assets omitted.
-  Build at: 2022-11-29T00:17:53.683Z - Hash: 64b2fe2babc079c7 - Time: 5924ms
+  Build at: 2022-11-29T00:59:49.747Z - Hash: 64b2fe2babc079c7 - Time: 5713ms
 
  DONE  Build complete. The dist directory is ready to be deployed.
  INFO  Check out deployment instructions at https://cli.vuejs.org/guide/deployment.html
        
-Removing intermediate container df3d57fae096
- ---> 189b2c219554
+Removing intermediate container e3db9f7ce9bf
+ ---> e6e091624d1a
 Step 7/10 : FROM nginx:1.23.2-alpine as production-stage
  ---> d0ddde8e3f4f
 Step 8/10 : COPY --from=build-stage /app/dist /usr/share/nginx/html
@@ -152,10 +152,10 @@ Successfully tagged jsonserver:latest
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] stage
-[Pipeline] { (Docker Build FrontEnd)
+[Pipeline] { (Prepare Docker Image FrontEnd)
 [Pipeline] sh
-+ docker build -t jsonserver .
-Sending build context to Docker daemon   8.58MB
++ docker build -t diplomado/heroes-app .
+Sending build context to Docker daemon  8.595MB
 
 Step 1/10 : FROM node:16.18-alpine3.15 as build-stage
  ---> fb1708dc1692
@@ -170,10 +170,10 @@ Step 4/10 : RUN npm install
  ---> c54f47e5bbac
 Step 5/10 : COPY . .
  ---> Using cache
- ---> 7b11958294e8
+ ---> 8e7d9b932b51
 Step 6/10 : RUN npm run build
  ---> Using cache
- ---> 189b2c219554
+ ---> e6e091624d1a
 Step 7/10 : FROM nginx:1.23.2-alpine as production-stage
  ---> d0ddde8e3f4f
 Step 8/10 : COPY --from=build-stage /app/dist /usr/share/nginx/html
@@ -186,11 +186,11 @@ Step 10/10 : CMD ["nginx", "-g", "daemon off;"]
  ---> Using cache
  ---> 5aedbe8cd65d
 Successfully built 5aedbe8cd65d
-Successfully tagged jsonserver:latest
+Successfully tagged diplomado/heroes-app:latest
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] stage
-[Pipeline] { (Cloning Docker Compose Fullstack Repository)
+[Pipeline] { (Cloning Fullstack Repository)
 [Pipeline] echo
 Clonning Composer repository
 [Pipeline] git
@@ -215,7 +215,7 @@ Fetching upstream changes from https://github.com/manuel-munoz-guti/laboratorio4
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] stage
-[Pipeline] { (Build Backend and Frontend)
+[Pipeline] { (Build Fullstack repository)
 [Pipeline] sh
 + docker compose up -d
 Container proyecto_final-backend-1  Running
