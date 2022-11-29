@@ -1,25 +1,23 @@
 pipeline {
     agent any
-    stages('Building for DEV environment') {
-        agent {label 'debian-test'}
-        stage('Cloning Backend for DEV') {
+
+    stages('Building for DEV environment') {    
+        stage('Cloning for DEV') {
+            agent {label 'debian-test'}
             steps {
                 echo 'Cloning Backend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/backend-vue.git'
             }
-        }
-        stage('Cloning Frontend for DEV') {
             steps {
-                echo 'Clonning Frontend Project'
+                echo 'Cloning Frontend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/projecto-vue.git'
             }
         }
-        stage('Build backend DEV with docker-compose') {
+        stage('Build for DEV with docker-compose') {
+            agent {label 'debian-test'}
             steps {
                 sh 'docker-compose up -d dev'
             }
-        }
-        stage('Build frontend DEV with docker-compose') {
             steps {
                 sh 'docker-compose up -d hero-webapp'
             }
