@@ -1,39 +1,27 @@
 pipeline {
-    agent {label 'debian_server'}
-    stages {
-        stage('Cloning Back end') {
+    agent any
+    stages('Building for DEV environment') {
+        agent {label 'debian-test'}
+        stage('Cloning Backend for DEV') {
             steps {
-                echo 'Clonning Backend Project'
+                echo 'Cloning Backend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/backend-vue.git'
             }
         }
-        stage('Cloning Front end') {
+        stage('Cloning Frontend for DEV') {
             steps {
-                echo 'Clonning Backend Project'
                 echo 'Clonning Frontend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/projecto-vue.git'
             }
         }
-        stage('Prepare Docker Image Backend') {
+        stage('Build backend DEV with docker-compose') {
             steps {
-                sh 'docker build -t jsonserver .'
+                sh 'docker-compose up -d dev'
             }
         }
-        stage('Prepare Docker Image FrontEnd') {
+        stage('Build frontend DEV with docker-compose') {
             steps {
-                sh 'docker build -t jsonserver .'
-                sh 'docker build -t diplomado/heroes-app .'
-            }
-        }
-        stage('Cloning Fullstack Repository') {
-            steps {
-                echo 'Clonning Composer repository'
-                git branch: 'main', url: 'https://github.com/manuel-munoz-guti/laboratorio4.git'
-            }
-        }
-        stage('Build Fullstack repository') {
-            steps {
-                sh 'docker compose up -d'
+                sh 'docker-compose up -d hero-webapp'
             }
         }
     }
