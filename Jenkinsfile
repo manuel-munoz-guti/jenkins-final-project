@@ -12,7 +12,7 @@ pipeline {
                 echo 'Clonning Frontend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/projecto-vue.git'
                 echo 'Building dev frontend'
-                sh 'docker compose up -d dev'
+                sh 'docker-compose up -d dev'
             }
         }
         stage('Deploying for production Environment') {
@@ -25,7 +25,7 @@ pipeline {
                 echo 'Clonning Frontend Project'
                 git branch: 'main', url: 'https://github.com/manuel-munoz-guti/projecto-vue.git'
                 echo 'Building dev frontend'
-                sh 'docker compose up -d hero-webapp'
+                sh 'docker-compose up -d hero-webapp'
             }
         }
     }
